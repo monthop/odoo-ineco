@@ -1,0 +1,43 @@
+version: '3.1'
+services:
+  web:
+    image: tititab/odoo-11.0-ineco
+    depends_on:
+      - db
+    ports:
+      - "8069:8069"
+    volumes:
+      - odoo11-web-data:/var/lib/odoo
+      - ../odoo-addons:/mnt/extra-addons
+    environment:
+      - TZ=Asia/Bangkok
+    restart: unless-stopped
+    container_name: odoo11-ineco-web
+    command:
+      -- --init base_setup
+  db:
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    volumes:
+      - odoo11-db-data:/var/lib/postgresql/data
+    environment:
+      - TZ=Asia/Bangkok
+      - POSTGRES_USER=odoo
+      - POSTGRES_PASSWORD=odoo
+      - POSTGRES_DB=postgres
+    restart: unless-stopped
+    container_name: odoo11-ineco-db
+  adminer:
+    image: adminer
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+    environment:
+      - TZ=Asia/Bangkok
+    restart: unless-stopped
+    container_name: odoo11-ineco-adminer
+volumes:
+  odoo11-web-data:
+  odoo11-db-data:
